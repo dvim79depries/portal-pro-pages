@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hth · 信息卡片式介绍页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #faf8f2;  /* 米白基调 */
+            color: #2c2c2c;
+            line-height: 1.7;
+            padding: 2rem 1.25rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page {
+            max-width: 880px;
+            width: 100%;
+        }
+
+        /* 主视觉 —— 柔和卡片区域 */
+        .hero-card {
+            background-color: #ffffff;
+            border-radius: 28px;
+            padding: 2.8rem 2rem 2.4rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.02);
+            margin-bottom: 2.5rem;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .hero-card h1 {
+            font-size: 2rem;
+            font-weight: 450;
+            letter-spacing: -0.02em;
+            color: #1f2a36;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-card .subhead {
+            font-size: 1rem;
+            color: #6b7280;
+            border-left: 3px solid #d4c9b7;
+            padding-left: 1rem;
+            margin: 1rem 0 1.4rem;
+            font-style: normal;
+        }
+
+        .hero-card p {
+            margin-top: 1rem;
+            color: #3f3f3f;
+        }
+
+        .hero-card .highlight-link {
+            display: inline-block;
+            margin-top: 0.75rem;
+            background: #f3efe7;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            color: #2c3e4e;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .hero-card .highlight-link:hover {
+            background: #e4ddd2;
+        }
+
+        /* 双卡片网格：用途卡片 + 适合人群卡片 */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card-item {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .card-item h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1f2a36;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-item h2::before {
+            content: "◆";
+            font-size: 0.9rem;
+            color: #b7aa93;
+        }
+
+        .card-item ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-item li {
+            padding: 0.4rem 0;
+            border-bottom: 1px dashed #f0ece4;
+            font-size: 0.95rem;
+            color: #3f3f3f;
+        }
+
+        .card-item li:last-child {
+            border-bottom: none;
+        }
+
+        .card-item .tag {
+            display: inline-block;
+            background: #f0ece4;
+            border-radius: 100px;
+            padding: 0.2rem 0.9rem;
+            font-size: 0.8rem;
+            color: #4d4d4d;
+            margin-right: 0.4rem;
+        }
+
+        /* 引用块 / 提示框 风格 */
+        .inset-block {
+            background: #f5f1ea;
+            border-radius: 20px;
+            padding: 1.6rem 1.8rem;
+            margin: 2.2rem 0;
+            border-left: 6px solid #d4c2a8;
+            color: #353535;
+        }
+
+        .inset-block p {
+            margin: 0.4rem 0;
+        }
+
+        .inset-block .quote-attribution {
+            margin-top: 0.6rem;
+            font-size: 0.9rem;
+            color: #716b62;
+        }
+
+        /* 自然链接段落 */
+        .link-paragraph {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.8rem 2rem;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            font-size: 1rem;
+        }
+
+        .link-paragraph a, .inline-link {
+            color: #3a5a6f;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-thickness: 1px;
+            text-decoration-color: #cbbcae;
+            font-weight: 450;
+            transition: color 0.15s;
+        }
+
+        .link-paragraph a:hover, .inline-link:hover {
+            color: #1f2a36;
+            text-decoration-color: #1f2a36;
+        }
+
+        /* FAQ 摘要卡片 (折叠式样，只展示摘要) */
+        .faq-summary {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.5rem 1.8rem;
+            margin: 2rem 0 1rem;
+            border: 1px solid #ece7dd;
+        }
+
+        .faq-summary h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2f3b46;
+            margin-bottom: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .faq-item {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f2ede4;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-q {
+            font-weight: 470;
+            color: #2f3b46;
+            margin-bottom: 0.15rem;
+        }
+
+        .faq-a {
+            font-size: 0.9rem;
+            color: #5c5c5c;
+        }
+
+        .faq-a a {
+            color: #3a5a6f;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* 响应式细节 */
+        @media (max-width: 680px) {
+            .grid-cards {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .hero-card {
+                padding: 2rem 1.3rem;
+            }
+
+            .hero-card h1 {
+                font-size: 1.6rem;
+            }
+
+            .card-item {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .inset-block {
+                padding: 1.2rem 1.2rem;
+            }
+
+            .link-paragraph {
+                padding: 1.4rem 1.2rem;
+            }
+
+            .faq-summary {
+                padding: 1.2rem 1.2rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding: 1.2rem 0.8rem;
+            }
+        }
+
+        /* 页脚极简 */
+        .footer-note {
+            font-size: 0.85rem;
+            color: #9b958b;
+            text-align: center;
+            padding: 2rem 0 0.6rem;
+            border-top: 1px solid #ece7dd;
+            margin-top: 2rem;
+        }
+
+        .footer-note span {
+            background: #f5f1ea;
+            padding: 0 0.4rem;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- 主视觉卡片 -->
+    <div class="hero-card">
+        <h1>hth · 围绕关键词的自然展开</h1>
+        <div class="subhead">以温和的视角，了解 hth 所关联的主题内容与应用方式</div>
+        <p>许多人在接触一个信息平台时，往往先被其背后的理念所吸引。这里并非提供某种万能方案，而是尝试从「<strong>hth</strong>」这个关键词出发，梳理出几条可感知的线索：它如何出现在不同场景中、哪些群体更容易与之产生连接，以及它本身所承载的信息属性。</p>
+        <span class="highlight-link">一种观察，而非结论</span>
+    </div>
+
+    <!-- 双卡片：用途卡片 + 适合人群卡片 -->
+    <div class="grid-cards">
+        <!-- 用途卡片（特点/用途） -->
+        <div class="card-item">
+            <h2>用途卡片</h2>
+            <ul>
+                <li><span class="tag">浏览</span> 信息聚合与内容索引</li>
+                <li><span class="tag">参考</span> 多维度主题分类梳理</li>
+                <li><span class="tag">衔接</span> 不同兴趣点之间的自然跳转</li>
+                <li><span class="tag">探索</span> 基于关键词的主题延伸</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #6b6b6b;">每项用途都围绕关键词「hth」的语境展开，不预设唯一路径。</p>
+        </div>
+
+        <!-- 适合人群卡片 -->
+        <div class="card-item">
+            <h2>适合人群</h2>
+            <ul>
+                <li>对信息组织方式保持好奇的读者</li>
+                <li>希望在特定主题下获得多元视角的浏览者</li>
+                <li>倾向于非硬广、低干扰内容环境的用户</li>
+                <li>愿意花几分钟了解一个关键词背后脉络的人</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #6b6b6b;">没有严格的边界，任何人皆可自然走进来。</p>
+        </div>
+    </div>
+
+    <!-- 引用块 / 提示框风格段落 -->
+    <div class="inset-block">
+        <p>“关键词本身只是一个入口，重要的是它牵引出的那些碎片——它们彼此独立，又隐约相连。hth 在语境中更像一个坐标，而非终点。”</p>
+        <div class="quote-attribution">—— 来自某一则关于信息路径的随笔</div>
+    </div>
+
+    <!-- 自然链接段落（包含严格的 a 标签，文本为 hth） -->
+    <div class="link-paragraph">
+        <p>如果你恰好对上述方向感兴趣，或者只是单纯想看看 <a href="https://webs-portal-hth.com">hth</a> 这个关键词在页面中如何被组织，可以通过这个链接直接抵达。链接文本本身仅包含「hth」两个字母，没有任何附加的引导词，它只是作为一个自然的指向存在。你可以把它看作一个安静的入口，不着急，不催促。</p>
+        <p style="margin-top: 0.8rem; color: #5f5f5f;">页面的设计理念是：让信息自己说话，而不是让按钮替它大声吆喝。</p>
+    </div>
+
+    <!-- FAQ 摘要卡片（仅摘要层级，不展开全部） -->
+    <div class="faq-summary">
+        <h3>常见想法 · 摘要</h3>
+        <div class="faq-item">
+            <div class="faq-q">这个页面和 hth 是什么关系？</div>
+            <div class="faq-a">页面以 hth 为核心关键词，展示与之相关的用途、人群及信息组织方式，并非产品介绍页。</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">我可以从这里获得什么？</div>
+            <div class="faq-a">一个安静的浏览体验，以及关于关键词「hth」的自然延伸内容。没有复杂层级，没有诱导点击。</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">链接指向哪里？</div>
+            <div class="faq-a">指向 <a href="https://webs-portal-hth.com">hth</a> 所在的站点，链接文本干净，不附加额外词汇。</div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer-note">
+        <span>hth · 信息卡片式介绍</span> &nbsp; | &nbsp; 米白背景 · 文章排版
+    </div>
+</div>
+</body>
+</html>
